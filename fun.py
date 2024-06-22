@@ -32,9 +32,7 @@ def sleep(num):
 
 # 模拟鼠标移动
 def simulate_move(tup1, tup2):
-    x = random.randint(tup1[0], tup2[0])
-    y = random.randint(tup1[1], tup2[1])
-    pyautogui.moveTo(x, y)
+    pyautogui.moveTo(random.randint(tup1[0], tup2[0]), random.randint(tup1[1], tup2[1]))
 
 # 模拟鼠标点击
 def simulate_click():

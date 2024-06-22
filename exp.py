@@ -1,10 +1,13 @@
+import math
+import time
 import fun
 import pyautogui
 import cv2
 import numpy as np
 
 # 经验本
-def go_exp(num):
+def go_exp(num = 1):
+    start_time = time.time()
     current = 1
     while current <= num:
         screenshot = pyautogui.screenshot()
@@ -40,6 +43,10 @@ def go_exp(num):
             fun.find_and_click(template, drive_pic)
         else:
             fun.sleep(1000)
+    spend_seconds = math.floor(time.time() - start_time)
+    print('-------------')
+    print('战斗场次', num)
+    print('总耗时', math.floor(spend_seconds / 60), '分', math.floor(spend_seconds) % 60, '秒')
 
 # 战斗
 def fight():
@@ -68,11 +75,11 @@ def fight():
             fun.simulate_move((0, 0), (500, 500))
             return
         else:
-            fun.sleep(3000)
+            fun.sleep(1000)
 
 
 def get_module():
     print('模块数：')
 
 
-go_exp(3)
+go_exp(2)
