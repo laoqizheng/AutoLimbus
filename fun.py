@@ -114,3 +114,10 @@ def print_module():
     tup1, tup2 = find(template, module_pic)
     module_num_pic = pyautogui.screenshot(region=[tup2[0], tup1[1], 100, tup2[1] - tup1[1]])
     print('模块', pytesseract.image_to_string(module_num_pic, lang='chi_sim').replace('\n', ''))
+
+
+def get_text(x, y, length, width):
+    img = pyautogui.screenshot(region=[x, y, length, width])
+    return pytesseract.image_to_string(img, lang='chi_sim').replace('\n', '')
+
+
