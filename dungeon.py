@@ -29,9 +29,14 @@ determine_pic = cv2.imread('./pic/dungeon/event/determine.png')
 join_pic = cv2.imread('./pic/dungeon/join_fight/join.png')
 join_num_pic = cv2.imread('./pic/dungeon/join_fight/join_num.png')
 fight_pic = cv2.imread('./pic/dungeon/event/fight.png')
+
 leave_pic = cv2.imread('./pic/dungeon/store/leave.png')
 confirm_leave_rest_pic = cv2.imread('pic/dungeon/store/confirm_leave_rest.png')
 confirm_leave_store_pic = cv2.imread('./pic/dungeon/store/confirm_leave_store.png')
+buy_pic = cv2.imread('./pic/dungeon/store/buy.png')
+buy_confirm_pic = cv2.imread('./pic/dungeon/store/buy_confirm.png')
+heal_pic = cv2.imread('./pic/dungeon/store/heal.png')
+streng_pic = cv2.imread('./pic/dungeon/store/streng.png')
 
 battle_num = 0
 last_pos = 2
@@ -199,28 +204,14 @@ def event():
             fun.find_and_click(screenshot, determine_pic)
             fun.sleep(1000)
         elif fun.find(screenshot, store_pic)[0]:
-            print('进入商店')
-            if config.auto_skip_store:
-                fun.sleep(2000)
-                fun.find_and_click(screenshot, leave_pic)
-                store_confirm_pic = cv2.imread('./pic/dungeon/store/confirm.png')
-                while True:
-                    screenshot = fun.screenshot()
-                    if fun.find(screenshot, confirm_leave_store_pic)[0]:
-                        print('leave_store')
-                        fun.find_and_click(screenshot, store_confirm_pic)
-                        # a, b = fun.find(screenshot, confirm_leave_store_pic)
-                        # cv2.imshow('res', cv2.rectangle(screenshot, a, b, (0, 255, 0), 2))
-                        # cv2.waitKey(0)
-                        break
-                    elif fun.find(screenshot, confirm_leave_rest_pic)[0]:
-                        print('leave_rest')
-                        fun.find_and_click(screenshot, store_confirm_pic)
-                        break
-                    else:
-                        print('sleep')
-                        fun.sleep(1000)
-            break
+            if fun.find(screenshot, streng_pic)[0]:
+                print('进入休息点')
+                rest()
+                break
+            else:
+                print('进入商店')
+                store()
+                break
         elif fun.find(screenshot, fight_pic)[0]:
             fun.find_and_click(screenshot, fight_pic)
             break
@@ -399,5 +390,97 @@ def choose_card():
     pyautogui.dragTo(x, y+500, 1, button='left')
 
 
-# choose_reward()
+def store():
+    store_confirm_pic = cv2.imread('./pic/dungeon/store/confirm.png')
+    screenshot = fun.screenshot()
+    if config.auto_skip_store == False:
+        if config.auto_store:
+            buy()
+        else:
+            return
+    fun.find_and_click(screenshot, leave_pic)
+    fun.sleep(1000)
+    while True:
+        screenshot = fun.screenshot()
+        if fun.find(screenshot, confirm_leave_store_pic)[0]:
+            print('leave_store')
+            fun.find_and_click(screenshot, store_confirm_pic)
+            break
+        else:
+            print('sleep')
+            fun.sleep(1000)
+
+
+def buy():
+    list = [
+        {'label': 'skill_loc', 'loc': ((1482, 664), (1734, 715))},
+        {'label': 'item1_loc', 'loc': ((1826, 664), (2073, 715))},
+        {'label': 'item2_loc', 'loc': ((2170, 664), (2417, 715))},
+        {'label': 'item3_loc', 'loc': ((1482, 916), (1734, 967))},
+        {'label': 'item4_loc', 'loc': ((1826, 916), (2073, 967))},
+        {'label': 'item5_loc', 'loc': ((2170, 916), (2417, 967))},
+    ]
+    item_list = []
+    # 遍历商店
+    for i in list:
+        x = i['loc'][0][0]
+        y = i['loc'][0][1]
+        length = i['loc'][1][0] - i['loc'][0][0]
+        width = i['loc'][1][1] - i['loc'][0][1]
+        item = fun.get_text(x, y, length, width)
+        print(item)
+        item_list.append(item)
+    # 购买操作
+    for item in item_list:
+        if item in config.buy_list:
+            print('buy', item)
+            fun.simulate_move(list[item_list.index(item)]['loc'][0], list[item_list.index(item)]['loc'][1])
+            fun.simulate_click()
+            fun.sleep(1000)
+            while True:
+                screenshot = fun.screenshot()
+                if fun.find(screenshot, buy_pic)[0]:
+                    fun.find_and_click(screenshot, buy_pic)
+                    fun.sleep(1000)
+                    while True:
+                        screenshot = fun.screenshot()
+                        if fun.find(screenshot, buy_confirm_pic)[0]:
+                            fun.find_and_click(screenshot, buy_confirm_pic)
+                            while True:
+                                screenshot = fun.screenshot()
+                                if fun.find(screenshot, heal_pic)[0]:
+                                    break
+                                else:
+                                    fun.sleep(1000)
+                            break
+                        else:
+                            fun.sleep(1000)
+                    break
+                else:
+                    fun.sleep(1000)
+    print('buy finish')
+
+
+def rest():
+    store_confirm_pic = cv2.imread('./pic/dungeon/store/confirm.png')
+    screenshot = fun.screenshot()
+    if config.auto_skip_rest == False:
+        if config.auto_rest:
+            print('')
+        else:
+            return
+    else:
+        fun.find_and_click(screenshot, leave_pic)
+        fun.sleep(1000)
+        while True:
+            screenshot = fun.screenshot()
+            if fun.find(screenshot, confirm_leave_rest_pic)[0]:
+                print('leave_rest')
+                fun.find_and_click(screenshot, store_confirm_pic)
+                break
+            else:
+                print('sleep')
+                fun.sleep(1000)
+
+# store()
 semi_automatic()
