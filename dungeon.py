@@ -6,6 +6,7 @@ import time
 import math
 import random
 import config
+import buy_list
 
 win_rate_pic = cv2.imread('./pic/win_rate.png')
 book_pic = cv2.imread('./pic/dungeon/book.png')
@@ -412,31 +413,29 @@ def store():
 
 
 def buy():
-    list = [
-        {'label': 'skill_loc', 'loc': ((1482, 664), (1734, 715))},
-        {'label': 'item1_loc', 'loc': ((1826, 664), (2073, 715))},
-        {'label': 'item2_loc', 'loc': ((2170, 664), (2417, 715))},
-        {'label': 'item3_loc', 'loc': ((1482, 916), (1734, 967))},
-        {'label': 'item4_loc', 'loc': ((1826, 916), (2073, 967))},
-        {'label': 'item5_loc', 'loc': ((2170, 916), (2417, 967))},
-    ]
-    item_list = []
-    # 遍历商店
-    for i in list:
-        x = i['loc'][0][0]
-        y = i['loc'][0][1]
-        length = i['loc'][1][0] - i['loc'][0][0]
-        width = i['loc'][1][1] - i['loc'][0][1]
-        item = fun.get_text(x, y, length, width)
-        print(item)
-        item_list.append(item)
+    # list = [
+    #     {'label': 'skill_loc', 'loc': ((1482, 664), (1734, 715))},
+    #     {'label': 'item1_loc', 'loc': ((1826, 664), (2073, 715))},
+    #     {'label': 'item2_loc', 'loc': ((2170, 664), (2417, 715))},
+    #     {'label': 'item3_loc', 'loc': ((1482, 916), (1734, 967))},
+    #     {'label': 'item4_loc', 'loc': ((1826, 916), (2073, 967))},
+    #     {'label': 'item5_loc', 'loc': ((2170, 916), (2417, 967))},
+    # ]
+    # item_list = []
+    # # 遍历商店
+    # for i in list:
+    #     x = i['loc'][0][0]
+    #     y = i['loc'][0][1]
+    #     length = i['loc'][1][0] - i['loc'][0][0]
+    #     width = i['loc'][1][1] - i['loc'][0][1]
+    #     item = fun.get_text(x, y, length, width)
+    #     print(item)
+    #     item_list.append(item)
     # 购买操作
-    for item in item_list:
-        if item in config.buy_list:
-            print('buy', item)
-            fun.simulate_move(list[item_list.index(item)]['loc'][0], list[item_list.index(item)]['loc'][1])
-            fun.simulate_click()
-            fun.sleep(1000)
+    screenshot = fun.screenshot()
+    for i in buy_list.list:
+        if fun.find(screenshot, i)[0]:
+            fun.find_and_click(screenshot, i)
             while True:
                 screenshot = fun.screenshot()
                 if fun.find(screenshot, buy_pic)[0]:
@@ -460,7 +459,6 @@ def buy():
                     fun.sleep(1000)
     print('buy finish')
 
-
 def rest():
     store_confirm_pic = cv2.imread('./pic/dungeon/store/confirm.png')
     screenshot = fun.screenshot()
@@ -482,5 +480,5 @@ def rest():
                 print('sleep')
                 fun.sleep(1000)
 
-# store()
+
 semi_automatic()
