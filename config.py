@@ -11,6 +11,8 @@ auto_skip_rest = False
 # 自动休息点强化
 auto_rest = False
 
+system = 'bleed'
+
 buy_list = [
 
 ]

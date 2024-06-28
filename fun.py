@@ -80,13 +80,9 @@ def screenshot():
 
 
 
-
-# a, b = find(cv2.cvtColor(np.array(pyautogui.screenshot()), cv2.COLOR_BGR2RGB), cv2.imread('./pic/aa.png'))
-# img = pyautogui.screenshot(region=[2170, 916, 247, 51])
-# cv2.imshow('a', cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB))
-# a, b = find(screenshot(), cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB))
-# print(a)
-# print(b)
-# print(get_text(a[0], a[1], b[0] - a[0], b[1] - a[1]))
-# cv2.imshow('res', cv2.rectangle(tem, a, b, (0, 255, 0), 2))
+# sc = screenshot()
+# img = cv2.imread('./pic/dungeon/rest/rest_list/aa.png')
+# a, b = find(sc, img)
+# print(a, b)
+# cv2.imshow('res', cv2.rectangle(sc, a, b, (0, 255, 0), 2))
 # cv2.waitKey(0)

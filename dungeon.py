@@ -7,6 +7,8 @@ import math
 import random
 import config
 import buy_list
+import rest_list
+import dungeon_arguments
 
 win_rate_pic = cv2.imread('./pic/win_rate.png')
 book_pic = cv2.imread('./pic/dungeon/book.png')
@@ -32,12 +34,17 @@ join_num_pic = cv2.imread('./pic/dungeon/join_fight/join_num.png')
 fight_pic = cv2.imread('./pic/dungeon/event/fight.png')
 
 leave_pic = cv2.imread('./pic/dungeon/store/leave.png')
-confirm_leave_rest_pic = cv2.imread('pic/dungeon/store/confirm_leave_rest.png')
 confirm_leave_store_pic = cv2.imread('./pic/dungeon/store/confirm_leave_store.png')
 buy_pic = cv2.imread('./pic/dungeon/store/buy.png')
 buy_confirm_pic = cv2.imread('./pic/dungeon/store/buy_confirm.png')
 heal_pic = cv2.imread('./pic/dungeon/store/heal.png')
-streng_pic = cv2.imread('./pic/dungeon/store/streng.png')
+
+confirm_leave_rest_pic = cv2.imread('pic/dungeon/rest/confirm_leave_rest.png')
+streng_ego_pic = cv2.imread('pic/dungeon/rest/streng_ego.png')
+streng_ego_pic2 = cv2.imread('pic/dungeon/rest/streng_ego2.png')
+confirm_streng_pic = cv2.imread('./pic/dungeon/rest/confirm_streng.png')
+confirm_streng_pic2 = cv2.imread('./pic/dungeon/rest/confirm_streng2.png')
+
 
 battle_num = 0
 last_pos = 2
@@ -205,7 +212,7 @@ def event():
             fun.find_and_click(screenshot, determine_pic)
             fun.sleep(1000)
         elif fun.find(screenshot, store_pic)[0]:
-            if fun.find(screenshot, streng_pic)[0]:
+            if fun.find(screenshot, streng_ego_pic)[0]:
                 print('进入休息点')
                 rest()
                 break
@@ -383,12 +390,32 @@ def choose_ego():
 
 
 def choose_card():
+    screenshot = fun.screenshot()
+    if dungeon_arguments.fused_gifts[0] == False:
+        tup1, tup2 = fun.find(screenshot, dungeon_arguments.fused_gifts_1)
+        if tup1 != False:
+            x = random.randint(tup1[0], tup2[0])
+            y = random.randint(485, 825)
+            pyautogui.moveTo(x, y)
+            pyautogui.dragTo(x, y + 500, 1, button='left')
+            dungeon_arguments.need_card_gift = True
+            return
+    if dungeon_arguments.fused_gifts[1] == False:
+        tup1, tup2 = fun.find(screenshot, dungeon_arguments.fused_gifts_1)
+        if tup1 != False:
+            x = random.randint(tup1[0], tup2[0])
+            y = random.randint(485, 825)
+            pyautogui.moveTo(x, y)
+            pyautogui.dragTo(x, y + 500, 1, button='left')
+            dungeon_arguments.need_card_gift = True
+            return
     tup1 = (275, 485)
     tup2 = (607, 825)
     x = random.randint(tup1[0], tup2[0])
     y = random.randint(tup1[1], tup2[1])
     pyautogui.moveTo(x, y)
-    pyautogui.dragTo(x, y+500, 1, button='left')
+    pyautogui.dragTo(x, y + 500, 1, button='left')
+    dungeon_arguments.need_card_gift = False
 
 
 def store():
@@ -410,7 +437,6 @@ def store():
         else:
             print('sleep')
             fun.sleep(1000)
-
 
 def buy():
     # list = [
@@ -480,5 +506,25 @@ def rest():
                 print('sleep')
                 fun.sleep(1000)
 
+def streng():
+    screenshot = fun.screenshot()
+    fun.find_and_click(screenshot, streng_ego_pic)
+    while True:
+        screenshot = fun.screenshot()
+        if fun.find(screenshot, streng_ego_pic2)[0]:
+            for i in rest_list.list:
+                if fun.find(screenshot, i)[0]:
+                    fun.find_and_click(screenshot, i)
+                    for time in range(2):
+                        fun.find_and_click(screenshot, confirm_streng_pic)
+                        while True:
+                            screenshot = fun.screenshot()
+                            if fun.find(screenshot, confirm_streng_pic2)[0]:
+                                fun.find_and_click(screenshot, confirm_streng_pic2)
+            break
+        else:
+            fun.sleep(1000)
+    print('')
 
-semi_automatic()
+
+streng()
