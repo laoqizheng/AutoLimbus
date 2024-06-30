@@ -6,10 +6,12 @@ auto_choose_card = True
 auto_skip_store = False
 # 自动商店购买
 auto_store = False
-# 自动跳过休息点
-auto_skip_rest = False
+# # 自动跳过休息点
+# auto_skip_rest = False
 # 自动休息点强化
-auto_rest = False
+auto_rest = [True, False, False, False]
+# 自动对战第四层boss
+auto_boss_4 = False
 
 system = 'bleed'
 

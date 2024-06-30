@@ -14,7 +14,9 @@ fused_gifts_2 = cv2.imread('./pic/dungeon/floor/floor_rewards/rusted_muzzle.png'
 floor = 1
 
 in_floor = False
-
+# 路径数组
 path_list = []
-
+# 战斗场数
 battle_num = 0
+# 终止标记
+stop_flag = False

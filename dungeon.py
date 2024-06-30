@@ -55,6 +55,8 @@ def semi_automatic():
     start_time = time.time()
     while True:
         screenshot = cv2.cvtColor(np.array(pyautogui.screenshot()), cv2.COLOR_BGR2RGB)
+        if dungeon_arguments.stop_flag:
+            return
         if fun.find(screenshot, join_pic)[0]:
             pyautogui.press('enter')
             while True:
@@ -298,7 +300,14 @@ def next_ele():
         (1370, 490),
         (1370, 920)
     ]
-    if dungeon_arguments.path_list[-1].type == 'floor' and dungeon_arguments.path_list[-1].floor != 1 or dungeon_arguments.path_list[-1].type == 'rest' and dungeon_arguments.path_list[-2].type == 'store':
+    # 是否自动对战第四层boss
+    if dungeon_arguments.path_list[-1].type == 'rest' and dungeon_arguments.path_list[-2].type == 'store':
+        if config.auto_boss_4 == True:
+            can_go_list = [(1370, 490)]
+        else:
+            dungeon_arguments.stop_flag = True
+            return
+    if dungeon_arguments.path_list[-1].type == 'floor' and dungeon_arguments.path_list[-1].floor != 1:
         can_go_list = [(1370, 490)]
     elif dungeon_arguments.path_list[-1].position != 2:
         can_go_list.pop(dungeon_arguments.path_list[-1].position - 1)
@@ -481,25 +490,24 @@ def buy():
 def rest():
     store_confirm_pic = cv2.imread('./pic/dungeon/store/confirm.png')
     screenshot = fun.screenshot()
-    if config.auto_skip_rest == False:
-        if config.auto_rest:
-            print('')
-        else:
-            return
+    if config.auto_rest[dungeon_arguments.path_list[-1].floor - 1]:
+        streng()
     else:
-        fun.find_and_click(screenshot, leave_pic)
-        fun.sleep(1000)
-        while True:
-            screenshot = fun.screenshot()
-            if fun.find(screenshot, confirm_leave_rest_pic)[0]:
-                print('leave_rest')
-                fun.find_and_click(screenshot, store_confirm_pic)
-                break
-            else:
-                print('sleep')
-                fun.sleep(1000)
+        return
+    fun.find_and_click(screenshot, leave_pic)
+    fun.sleep(1000)
+    while True:
+        screenshot = fun.screenshot()
+        if fun.find(screenshot, confirm_leave_rest_pic)[0]:
+            print('leave_rest')
+            fun.find_and_click(screenshot, store_confirm_pic)
+            break
+        else:
+            print('sleep')
+            fun.sleep(1000)
 
 def streng():
+    print('streng')
     screenshot = fun.screenshot()
     fun.find_and_click(screenshot, streng_ego_pic)
     while True:
@@ -509,6 +517,7 @@ def streng():
                 if fun.find(screenshot, i)[0]:
                     fun.find_and_click(screenshot, i)
                     for time in range(2):
+                        fun.sleep(1000)
                         fun.find_and_click(screenshot, confirm_streng_pic)
                         fun.sleep(1000)
                         while True:
@@ -521,4 +530,3 @@ def streng():
 
 
 semi_automatic()
-# dungeon_arguments.path_list.append(node_path.node_path(1, 2, 'floor'))
