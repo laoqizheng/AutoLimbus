@@ -9,6 +9,7 @@ import config
 import buy_list
 import rest_list
 import dungeon_arguments
+import node_path
 
 win_rate_pic = cv2.imread('./pic/win_rate.png')
 book_pic = cv2.imread('./pic/dungeon/book.png')
@@ -46,9 +47,8 @@ confirm_streng_pic = cv2.imread('./pic/dungeon/rest/confirm_streng.png')
 confirm_streng_pic2 = cv2.imread('./pic/dungeon/rest/confirm_streng2.png')
 
 
-last_pos = 2
-
 def semi_automatic():
+    dungeon_arguments.path_list.append(node_path.node_path(1, 2, ''))
     dungeon_arguments.in_floor = False
     in_reward = False
     in_ego = False
@@ -83,11 +83,10 @@ def semi_automatic():
             break
         elif fun.find(screenshot, floor_sign_pic)[0] != False:
             if dungeon_arguments.in_floor == False:
-                global last_pos
-                if dungeon_arguments.floor != 1:
-                    last_pos = 'boss'
+                dungeon_arguments.path_list.append(node_path.node_path(dungeon_arguments.floor, 2, 'floor'))
                 dungeon_arguments.in_floor = True
                 print('第', dungeon_arguments.floor, '层')
+                print('path_list', len(dungeon_arguments.path_list))
                 dungeon_arguments.floor += 1
                 fun.sleep(2000)
                 if config.auto_choose_card:
@@ -167,7 +166,7 @@ def fight():
             pyautogui.press('p')
             fun.randomSleep(500, 1000)
             pyautogui.press('enter')
-            print('回合', turn)
+            # print('回合', turn)
             turn += 1
             fun.sleep(5000)
         elif fun.find(screenshot, book_pic)[0]:
@@ -209,10 +208,12 @@ def event():
         elif fun.find(screenshot, store_pic)[0]:
             if fun.find(screenshot, streng_ego_pic)[0]:
                 print('进入休息点')
+                dungeon_arguments.path_list[-1].type = 'rest'
                 rest()
                 break
             else:
                 print('进入商店')
+                dungeon_arguments.path_list[-1].type = 'store'
                 store()
                 break
         elif fun.find(screenshot, fight_pic)[0]:
@@ -287,7 +288,6 @@ def ego_event_choose():
 
 
 def next_ele():
-    global last_pos
     loc_list = [
         (1370, 60),
         (1370, 490),
@@ -298,10 +298,10 @@ def next_ele():
         (1370, 490),
         (1370, 920)
     ]
-    if last_pos == 1 or last_pos == 3:
-        can_go_list.pop(last_pos - 1)
-    elif last_pos == 'boss':
+    if dungeon_arguments.path_list[-1].type == 'floor' and dungeon_arguments.path_list[-1].floor != 1 or dungeon_arguments.path_list[-1].type == 'rest' and dungeon_arguments.path_list[-2].type == 'store':
         can_go_list = [(1370, 490)]
+    elif dungeon_arguments.path_list[-1].position != 2:
+        can_go_list.pop(dungeon_arguments.path_list[-1].position - 1)
     length = 160
     for i in can_go_list:
         fun.simulate_move(i, (i[0] + length, i[1] + length))
@@ -310,12 +310,9 @@ def next_ele():
         fun.sleep(1000)
         screenshot = cv2.cvtColor(np.array(pyautogui.screenshot()), cv2.COLOR_BGR2RGB)
         if fun.find(screenshot, join_pic)[0]:
-            if last_pos == 'boss':
-                last_pos = 2
-            else:
-                last_pos = last_pos + loc_list.index(i) - 1
+            dungeon_arguments.path_list.append(node_path.node_path(dungeon_arguments.floor, dungeon_arguments.path_list[-1].position + loc_list.index(i) - 1, 'combat'))
+            print('path_list', len(dungeon_arguments.path_list))
             break
-
 
 def choose_reward():
     confirm_pic = cv2.imread('./pic/dungeon/choose_reward/confirm.png')
@@ -524,3 +521,4 @@ def streng():
 
 
 semi_automatic()
+# dungeon_arguments.path_list.append(node_path.node_path(1, 2, 'floor'))

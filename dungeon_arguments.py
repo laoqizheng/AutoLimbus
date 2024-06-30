@@ -12,10 +12,9 @@ fused_gifts_2 = cv2.imread('./pic/dungeon/floor/floor_rewards/rusted_muzzle.png'
 
 # 当前层数
 floor = 1
+
 in_floor = False
 
 path_list = []
-
-last_pos = 2
 
 battle_num = 0
