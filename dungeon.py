@@ -46,16 +46,13 @@ confirm_streng_pic = cv2.imread('./pic/dungeon/rest/confirm_streng.png')
 confirm_streng_pic2 = cv2.imread('./pic/dungeon/rest/confirm_streng2.png')
 
 
-battle_num = 0
 last_pos = 2
-floor = 1
 
 def semi_automatic():
-    in_floor = False
+    dungeon_arguments.in_floor = False
     in_reward = False
     in_ego = False
     start_time = time.time()
-    global battle_num
     while True:
         screenshot = cv2.cvtColor(np.array(pyautogui.screenshot()), cv2.COLOR_BGR2RGB)
         if fun.find(screenshot, join_pic)[0]:
@@ -64,7 +61,7 @@ def semi_automatic():
                 screenshot_ready = cv2.cvtColor(np.array(pyautogui.screenshot()), cv2.COLOR_BGR2RGB)
                 if fun.find(screenshot_ready, join_num_pic)[0]:
                     pyautogui.press('enter')
-                    battle_num += 1
+                    dungeon_arguments.battle_num += 1
                     fight()
                     break
                 elif fun.find(screenshot_ready, skip_pic)[0]:
@@ -75,24 +72,23 @@ def semi_automatic():
         elif fun.find(screenshot, join_num_pic)[0] != False:
             fun.find_and_click(screenshot, join_num_pic)
             pyautogui.press('enter')
-            battle_num += 1
+            dungeon_arguments.battle_num += 1
             fight()
         elif fun.find(screenshot, finish_pic)[0] != False:
             spend_seconds = math.floor(time.time() - start_time)
             print('镜牢结束')
-            print('战斗场次', battle_num)
+            print('战斗场次', dungeon_arguments.battle_num)
             print('总耗时', math.floor(spend_seconds / 60), '分', math.floor(spend_seconds) % 60, '秒')
             finish()
             break
         elif fun.find(screenshot, floor_sign_pic)[0] != False:
-            if in_floor == False:
+            if dungeon_arguments.in_floor == False:
                 global last_pos
-                global floor
-                if floor != 1:
+                if dungeon_arguments.floor != 1:
                     last_pos = 'boss'
-                in_floor = True
-                print('第', floor, '层')
-                floor += 1
+                dungeon_arguments.in_floor = True
+                print('第', dungeon_arguments.floor, '层')
+                dungeon_arguments.floor += 1
                 fun.sleep(2000)
                 if config.auto_choose_card:
                     choose_card()
@@ -107,7 +103,7 @@ def semi_automatic():
                 in_reward = True
                 choose_reward()
         elif fun.find(screenshot, book_pic)[0]:
-            in_floor = False
+            dungeon_arguments.in_floor = False
             in_reward = False
             in_ego = False
             next_ele()
@@ -190,7 +186,6 @@ def fight():
 
 
 def event():
-    global battle_num
     confirm_pic = cv2.imread('./pic/dungeon/event/confirm.png')
     while True:
         screenshot = cv2.cvtColor(np.array(pyautogui.screenshot()), cv2.COLOR_BGR2RGB)
@@ -225,6 +220,7 @@ def event():
             break
         elif fun.find(screenshot, skip_pic)[0]:
             fun.find_and_click(screenshot, skip_pic)
+            fun.simulate_click()
         elif fun.find(screenshot, confirm_pic)[0]:
             fun.find_and_click(screenshot, confirm_pic)
             fun.sleep(2000)
@@ -235,7 +231,7 @@ def event():
         elif fun.find(screenshot, join_num_pic)[0]:
             pyautogui.press('enter')
             fight()
-            battle_num += 1
+            dungeon_arguments.battle_num += 1
             break
         elif fun.find(screenshot, book_pic)[0]:
             break
@@ -517,6 +513,7 @@ def streng():
                     fun.find_and_click(screenshot, i)
                     for time in range(2):
                         fun.find_and_click(screenshot, confirm_streng_pic)
+                        fun.sleep(1000)
                         while True:
                             screenshot = fun.screenshot()
                             if fun.find(screenshot, confirm_streng_pic2)[0]:
@@ -524,7 +521,6 @@ def streng():
             break
         else:
             fun.sleep(1000)
-    print('')
 
 
-streng()
+semi_automatic()

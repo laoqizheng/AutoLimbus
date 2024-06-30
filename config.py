@@ -1,7 +1,7 @@
 # 参数配置
 
 # 自动选卡包
-auto_choose_card = False
+auto_choose_card = True
 # 自动跳过商店
 auto_skip_store = False
 # 自动商店购买
