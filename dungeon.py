@@ -524,6 +524,9 @@ def streng():
                             screenshot = fun.screenshot()
                             if fun.find(screenshot, confirm_streng_pic2)[0]:
                                 fun.find_and_click(screenshot, confirm_streng_pic2)
+                            else:
+                                fun.simulate_move((0,0),(0,0))
+                                fun.sleep(1500)
             break
         else:
             fun.sleep(1000)

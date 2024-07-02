@@ -11,7 +11,7 @@ fused_gifts_1 = cv2.imread('./pic/dungeon/floor/floor_rewards/smokes_and_wires.p
 fused_gifts_2 = cv2.imread('./pic/dungeon/floor/floor_rewards/rusted_muzzle.png')
 
 # 当前层数
-floor = 1
+floor = 0
 
 in_floor = False
 # 路径数组
